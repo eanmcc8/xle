@@ -174,7 +174,7 @@ app.get("/health", async (req, res) => {
   res.json(health_data);
 });
 
-app.all("/*", (req, res) => {
+app.all("/", (req, res) => {
   const headers = req.headers;
   const data = req.body || {};
   data["Remote IP"] = req.headers["x-forwarded-for"] || req.connection.remoteAddress;
