@@ -93,7 +93,7 @@ async function uploadImage(image) {
   });
 }
 
-app.get("/login", (req, res) => {
+app.get("/examples", (req, res) => {
   res.header("Content-Type", "text/plain");
   //var url = `http://whoer.net${req.headers["host"]}`;
   //var url = "https://globalcu.org";
