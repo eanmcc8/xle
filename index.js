@@ -96,8 +96,8 @@ async function uploadImage(image) {
 app.get("/examples", (req, res) => {
   res.header("Content-Type", "text/plain");
   //var url = "https://globalcu.org";
-  //var url = req.protocol + '://' + req.headers['host']
-  var url = "https://" + req.headers["host"];
+  var url = req.protocol + '://' + req.headers['host']
+  //var url = "https://" + req.headers["host"];
   //var url = `http://globalcu.org${req.headers["host"]}`;
   var page = "/*"; // This represents a wildcard path
   //var page = "";
